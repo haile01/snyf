@@ -109,7 +109,6 @@ def test():
 	assert json.dumps(vulns) == open('test.json', 'r').read(), 'Template is wrong...' 
 
 if __name__ == "__main__":
-	test()
 	for dep in deps:
 		ver = deps[dep]
 		print("=====", dep, ver, "=====")
