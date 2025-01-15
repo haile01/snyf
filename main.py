@@ -5,7 +5,6 @@ import json
 
 HOST = 'https://security.snyk.io/package/npm'
 cwd = os.getcwd()
-deps = json.loads(open(cwd + '/package.json').read())['dependencies']
 
 vuln_template = """
 <tr.+?>
@@ -100,8 +99,27 @@ def format(vuln):
 	res += parse_vers(vuln_ver) + ' ' 
 	res += 'https://security.snyk.io/vuln/' + tag + ' '
 
-
 	return res
+
+def parse_deps():
+	if os.path.isfile(cwd + '/package-lock.json'):
+		res = {}
+		pkgs = json.loads(open(cwd + '/package-lock.json').read())
+		deps = pkgs['packages']['']['dependencies'].keys()
+		for dep in deps:
+			dep_path = 'node_modules/' + dep
+			if dep_path not in pkgs['packages']:
+				print(f'> Package {dep} is not here...')
+				continue
+			res[dep] = pkgs['packages'][dep_path]['version']
+
+		return res
+	else:
+		print('> package-lock.json not found. Looking at package.json instead')
+		print('> Warning: actual results maybe incorrect')
+		print('> Try "npm i --package-lock-only", add a bit of --force if red texts appear')
+		pkgs = json.loads(open(cwd + '/package.json').read())
+		return pkgs['dependencies']
 
 def test():
 	# Just to make sure if Snyk keeps the same template format
@@ -109,6 +127,8 @@ def test():
 	assert json.dumps(vulns) == open('test.json', 'r').read(), 'Template is wrong...' 
 
 if __name__ == "__main__":
+	deps = parse_deps()
+	print(f'> Found {str(len(deps))} direct dependencies')
 	for dep in deps:
 		ver = deps[dep]
 		print("=====", dep, ver, "=====")
