@@ -45,7 +45,6 @@ def parse_args():
         raise Exception('Unsupported dependency manager...')
 
 if __name__ == "__main__":
-    test()
     mgmt, deps = parse_args()
     print(f'> Found {str(len(deps))} direct dependencies')
     for dep in deps:
