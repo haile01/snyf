@@ -10,9 +10,9 @@ Sniffing Snyk's reports on NPM/Maven dependencies
 ## How?
 Run the script at the project folder
 ```
-python3 -m snyf.main test
-python3 -m snyf.main npm 
-python3 -m snyf.main maven <target file> 
+python3 snyf/main.py test
+python3 snyf/main.py npm 
+python3 snyf/main.py maven <target file> 
 ```
 
 ## That's it?

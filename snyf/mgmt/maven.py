@@ -1,18 +1,20 @@
 import os
+import re
 from . import Manager
 
 class Maven(Manager):
     def parse(self, args):
         if len(args) == 1:
-            print('Usage: npm-snyf maven <target file>')
+            print('Usage: snyf/main.py maven <target file>')
             exit()
 
         path = self.cwd + '/' + args[1]
         if not os.path.isfile(path):
             print('> Target file not found...')
             exit()
-            target = open(path, 'r').read()
-            target = '\n'.join('' if len(line) and line[0] == '#' else line for line in target.split('\n'))
+
+        target = open(path, 'r').read()
+        target = '\n'.join('' if len(line) and line[0] == '#' else line for line in target.split('\n'))
 
         deps = self.simple_parse(target)
         if len(deps):
@@ -31,7 +33,7 @@ class Maven(Manager):
         # E.g:
         # commons-io:commons-io = "1.2.3"
 
-        versions = re.findall(r'([a-z0-9\.\-]+:[a-z0-9\.\-]+)\ ?=\ ?\"?([0-9\-\.a-zA-Z]+)\"?')
+        versions = re.findall(r'([a-z0-9\.\-]+:[a-z0-9\.\-]+)\ ?=\ ?\"?([0-9\-\.a-zA-Z]+)\"?', target)
         for version in versions:
             deps[version[0]] = version[1]
 

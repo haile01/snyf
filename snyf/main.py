@@ -3,6 +3,27 @@ import re
 import os
 import json
 import sys
+import importlib
+from pathlib import Path
+
+# NOTE: PEP366 thingy magingy
+def import_parents(level=1):
+    global __package__
+    file = Path(__file__).resolve()
+    parent, top = file.parent, file.parents[level]
+
+    sys.path.append(str(top))
+    try:
+        sys.path.remove(str(parent))
+    except ValueError: # already removed
+        pass
+
+    __package__ = '.'.join(parent.parts[len(top.parts):])
+    importlib.import_module(__package__) # won't be needed after that
+
+if __name__ == '__main__' and __package__ is None:
+    import_parents()
+
 from .checker.snyk import Snyk
 from .checker.maven import Maven
 from .mgmt.maven import Maven as MavenMgmt
@@ -26,7 +47,7 @@ def test():
 
 def parse_args():
     if len(sys.argv) == 1:
-        print('Usage: npm-synf <npm|maven|test> [target file]')
+        print('Usage: synf/main.py <npm|maven|test> [target file]')
         exit()
     args = sys.argv[1:]
     mgmt = ''
@@ -54,6 +75,6 @@ if __name__ == "__main__":
             # NOTE: only happen when package-lock.json is f-ed up, so anw...
             ver = ver[1:]
 
-        snyk.check(mgmt, dep, ver)
+        snyk.check(mgmt + '/' + dep, ver)
         if mgmt == "maven":
             maven.check(dep, ver)
