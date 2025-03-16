@@ -39,28 +39,20 @@ class Snyk(Checker):
             <span.+?><span.+?title="(.+?)".+?</span>.*?</span>
         """.replace('\n', '').replace('    ', '').strip())
 
+        self.parsed_version_template = re.compile("""
+            title="([\[\(][0-9a-zA-Z\-\.]*,[0-9a-zA-Z\-\.]*[\]\)])
+        """.replace('\n', '').replace('    ', '').strip())
+
     def clean_comment(self, text):
         return text.replace('<!--]-->', '').replace('<!--[-->', '').replace('<!---->', '')
 
-    def format(self, vuln):
-        res = ''
-        sev, tag, vuln_name, title, desc, fix, vuln_ver = vuln
-
-        if sev == 'L':
-            res += '\033[92m v[L] '
-        elif sev == 'M':
-            res += '\033[93m -[M] '
-        else:
-            res += '\033[91m ^[H] '
-
-        res += vuln_name + '\033[0m '
-        res += self.parse_vers(vuln_ver) + ' '
-        res += 'https://security.snyk.io/vuln/' + tag + ' '
-
-        return res
-
     def parse_vers(self, vers):
         res = []
+        # NOTE: In case Snyk did that for us alr
+        parsed = re.findall(self.parsed_version_template, vers)
+        if len(parsed):
+            return ' '.join(parsed)
+
         vers = re.findall(self.version_template, vers)
         for ver in vers:
             ver = ver.replace('&lt;', '<').replace('&gt;', '>')
@@ -90,6 +82,23 @@ class Snyk(Checker):
 
         return ' '.join(res)
 
+    def format(self, vuln):
+        res = ''
+        sev, tag, vuln_name, title, desc, fix, vuln_ver = vuln
+
+        if sev == 'L':
+            res += '\033[92m v[L] '
+        elif sev == 'M':
+            res += '\033[93m -[M] '
+        else:
+            res += '\033[91m ^[H] '
+
+        res += vuln_name + '\033[0m '
+        res += self.parse_vers(vuln_ver) + ' '
+        res += 'https://security.snyk.io/vuln/' + tag + ' '
+
+        return res
+
     def check(self, dep, ver):
         url = f'https://security.snyk.io/package/{dep}/{ver}'
         r = requests.get(url)
@@ -99,7 +108,20 @@ class Snyk(Checker):
             return
 
         print("\033[96m= Vulnerabilities from Snyk =\033[0m")
+        data = []
         for vuln in vulns:
-            print(self.format(vuln))
+            sev, tag, vuln_name, title, desc, fix, vuln_ver = vuln
+            sev_map = {
+                'L': 'low',
+                'M': 'medium',
+                'H': 'high'
+            }
+            data.append({
+                'name': vuln_name,
+                'sev': sev_map[sev],
+                'affected': self.parse_vers(vuln_ver),
+                'url': 'https://security.snyk.io/vuln/' + tag
+            })
+        self.render(url, data)
 
         return vulns

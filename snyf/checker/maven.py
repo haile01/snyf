@@ -24,8 +24,16 @@ class Maven(Checker):
         if len(direct) == 0:
             return
 
+        data = []
         print("\033[96m= Direct vulnerabilities from Maven repo =\033[0m")
         for vuln in direct:
-            print(f"- https://cve.mitre.org/cgi-bin/cvename.cgi?name=\033[91m{vuln}\033[0m")
+            data.append({
+                'name': vuln,
+                'sev': 'none',
+                'affected': ' ', # TODO
+                'url': 'https://cve.mitre.org/cgi-bin/cvename.cgi?name' + vuln
+            })
+
+        self.render(url, data)
 
         return direct
