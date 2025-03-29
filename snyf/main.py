@@ -28,13 +28,14 @@ from .checker.snyk import Snyk
 from .checker.maven import Maven
 from .mgmt.maven import Maven as MavenMgmt
 from .mgmt.npm import Npm as NpmMgmt
+from .utils.table_test import test as table_test
 
 snyk = Snyk()
 maven = Maven()
 maven_mgmt = MavenMgmt()
 npm_mgmt = NpmMgmt()
 
-def test():
+def snyk_test():
     # Just to make sure if Snyk keeps the same template format
     test_cases = json.loads(open('test.json', 'r').read())
     for test in test_cases:
@@ -54,7 +55,13 @@ def parse_args():
     deps = {}
 
     if args[0] == 'test':
-        test()
+        sub = args[1] if len(args) > 1 else 'snyk'
+        if sub == 'snyk':
+            snyk_test()
+        elif sub == 'table':
+            table_test()
+        else:
+            print('CTF idea?')
         exit()
 
     # Dep manager
