@@ -6,7 +6,7 @@ class Npm(Manager):
     def parse(self, args):
         if os.path.isfile(self.cwd + '/package-lock.json'):
             res = {}
-            pkgs = json.loads(open(cwd + '/package-lock.json').read())
+            pkgs = json.loads(open(self.cwd + '/package-lock.json').read())
             deps = pkgs['packages']['']['dependencies'].keys()
             for dep in deps:
                 dep_path = 'node_modules/' + dep
@@ -22,3 +22,5 @@ class Npm(Manager):
             print('> Try "npm i --package-lock-only", add a bit of --force if red texts appear')
             pkgs = json.loads(open(cwd + '/package.json').read())
             deps = pkgs['dependencies']
+
+        return deps
