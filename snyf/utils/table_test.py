@@ -20,6 +20,15 @@ def test():
                 ['a', 'b', 'a' * 200],
             ]
         ),
+        # fail case
+        (
+            '*|*|',
+            [
+                ['a' * 100, 'b', 'a'],
+                ['a', 'b' * 200, 'a'],
+                ['a', 'b', 'a' * 200],
+            ]
+        ),
     ]
     for t in cases:
         table = Table(format=t[0])
