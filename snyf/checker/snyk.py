@@ -50,8 +50,10 @@ class Snyk(Checker):
             res += '\033[92m v[L] '
         elif sev == 'M':
             res += '\033[93m -[M] '
-        else:
+        elif sev == 'H':
             res += '\033[91m ^[H] '
+        else:
+            res += '\033[91m ^[C] '
 
         res += vuln_name + '\033[0m '
         res += self.parse_vers(vuln_ver) + ' '

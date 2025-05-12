@@ -20,7 +20,7 @@ class Npm(Manager):
             print('> package-lock.json not found. Looking at package.json instead')
             print('> Warning: actual results maybe incorrect')
             print('> Try "npm i --package-lock-only", add a bit of --force if red texts appear')
-            pkgs = json.loads(open(cwd + '/package.json').read())
+            pkgs = json.loads(open(self.cwd + '/package.json').read())
             deps = pkgs['dependencies']
 
         return deps

@@ -28,11 +28,13 @@ from .checker.snyk import Snyk
 from .checker.maven import Maven
 from .mgmt.maven import Maven as MavenMgmt
 from .mgmt.npm import Npm as NpmMgmt
+from .mgmt.pip import Pip as PipMgmt
 
 snyk = Snyk()
 maven = Maven()
 maven_mgmt = MavenMgmt()
 npm_mgmt = NpmMgmt()
+pip_mgmt = PipMgmt()
 
 def test():
     # Just to make sure if Snyk keeps the same template format
@@ -62,6 +64,8 @@ def parse_args():
         return 'npm', npm_mgmt.parse(args)
     elif args[0] == 'maven':
         return 'maven', maven_mgmt.parse(args)
+    elif args[0] == 'pip':
+        return 'pip', pip_mgmt.parse(args)
     else:
         raise Exception('Unsupported dependency manager...')
 
