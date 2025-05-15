@@ -2,6 +2,7 @@ import re
 import requests
 from . import Checker
 
+# TODO: https://security.snyk.io/package/npm/lodash/4.17.20
 class Snyk(Checker):
     def __init__(self):
         self.vuln_template = re.compile("""
