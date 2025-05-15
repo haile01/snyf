@@ -28,12 +28,14 @@ from .checker.snyk import Snyk
 from .checker.maven import Maven
 from .mgmt.maven import Maven as MavenMgmt
 from .mgmt.npm import Npm as NpmMgmt
+from .mgmt.pnpm import Pnpm as PnpmMgmt
 from .mgmt.pip import Pip as PipMgmt
 
 snyk = Snyk()
 maven = Maven()
 maven_mgmt = MavenMgmt()
 npm_mgmt = NpmMgmt()
+pnpm_mgmt = PnpmMgmt()
 pip_mgmt = PipMgmt()
 
 def test():
@@ -62,6 +64,8 @@ def parse_args():
     # Dep manager
     if args[0] == 'npm':
         return 'npm', npm_mgmt.parse(args)
+    if args[0] == 'pnpm':
+        return 'npm', pnpm_mgmt.parse(args) # NOTE: yep
     elif args[0] == 'maven':
         return 'maven', maven_mgmt.parse(args)
     elif args[0] == 'pip':
