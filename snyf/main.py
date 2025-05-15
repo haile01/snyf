@@ -30,6 +30,7 @@ from .mgmt.maven import Maven as MavenMgmt
 from .mgmt.npm import Npm as NpmMgmt
 from .mgmt.pnpm import Pnpm as PnpmMgmt
 from .mgmt.pip import Pip as PipMgmt
+from .utils.fetch_pipeline import Pipeline
 
 snyk = Snyk()
 maven = Maven()
@@ -38,7 +39,7 @@ npm_mgmt = NpmMgmt()
 pnpm_mgmt = PnpmMgmt()
 pip_mgmt = PipMgmt()
 
-def test():
+def test_template():
     # Just to make sure if Snyk keeps the same template format
     test_cases = json.loads(open('test.json', 'r').read())
     for test in test_cases:
@@ -47,7 +48,16 @@ def test():
         vulns = checker.check(test['dep'], test['ver'])
         assert json.dumps(vulns) == json.dumps(test['vulns']), 'Template is wrong...'
 
-    exit()
+def test_fetch():
+    pipeline = Pipeline()
+
+    pipeline.load('test.yaml')
+
+    schema = {
+        "{dependencies.$}": "{specifier}",
+    }
+
+    print(pipeline.parse(schema, pretty=True))
 
 def parse_args():
     if len(sys.argv) == 1:
@@ -58,7 +68,12 @@ def parse_args():
     deps = {}
 
     if args[0] == 'test':
-        test()
+        subject = 'template' if len(args) == 1 else args[1]
+        if subject == 'template':
+            test_template()
+        if subject == 'fetch':
+            test_fetch()
+
         exit()
 
     # Dep manager
@@ -66,12 +81,12 @@ def parse_args():
         return 'npm', npm_mgmt.parse(args)
     if args[0] == 'pnpm':
         return 'npm', pnpm_mgmt.parse(args) # NOTE: yep
-    elif args[0] == 'maven':
+    if args[0] == 'maven':
         return 'maven', maven_mgmt.parse(args)
-    elif args[0] == 'pip':
+    if args[0] == 'pip':
         return 'pip', pip_mgmt.parse(args)
-    else:
-        raise Exception('Unsupported dependency manager...')
+
+    raise Exception('Unsupported dependency manager...')
 
 if __name__ == "__main__":
     mgmt, deps = parse_args()

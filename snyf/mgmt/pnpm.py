@@ -2,21 +2,16 @@ import os
 import yaml
 import json
 from . import Manager
+from ..utils.fetch_pipeline import Pipeline
 
 class Pnpm(Manager):
     target = 'pnpm-lock.yaml'
 
     def parse(self, args):
+        pipeline = Pipeline()
         if os.path.isfile(self.cwd + '/' + self.target):
-            deps = {}
-            pkgs = yaml.safe_load(open(self.cwd + '/' + self.target).read())
-            for dep in pkgs['dependencies']:
-                deps[dep] = pkgs['dependencies'][dep]['specifier']
-
+            return pipeline.load(self.cwd + '/' + self.target).parse({ "{dependencies.$}": "{specifier}" })
         else:
             print(f'> {self.target} not found. Looking at package.json instead')
             print('> Warning: actual results maybe incorrect')
-            pkgs = json.loads(open(self.cwd + '/package.json').read())
-            deps = pkgs['dependencies']
-
-        return deps
+            return pipeline.load(self.cwd + '/package.json').parse({ "{dependencies.$}": "{$}" })
