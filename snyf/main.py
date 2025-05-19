@@ -48,6 +48,8 @@ def test_template():
         vulns = checker.check(test['dep'], test['ver'])
         assert json.dumps(vulns) == json.dumps(test['vulns']), 'Template is wrong...'
 
+    print('\033[92m \033[1m Test ran successfully \033[0m \033[0m')
+
 def test_fetch():
     pipeline = Pipeline()
 

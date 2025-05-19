@@ -2,37 +2,22 @@ import re
 import requests
 from . import Checker
 
-# TODO: https://security.snyk.io/package/npm/lodash/4.17.20
 class Snyk(Checker):
     def __init__(self):
         self.vuln_template = re.compile("""
             <tr.+?>
-            <td.+?>
-            <ul.+?>
-            <li.+?>
-            <abbr.+?>
-             (?P<sev>[A-Z])<\/abbr>
-            <\/li>
-            <\/ul>
-            <a.+? href="\/vuln\/(?P<tag>[A-Za-z0-9\-]+?)".+?>
-            (?P<vuln_name>.+?)
-            <\/a>
-            <div.+?>
-            <div.+?>
-            <p>(?P<title>[\s\S]+?)<\/p>
-            \s+?<p>(?P<desc>[\s\S]+?)<\/p>
-            \s+?<\/div>
-            <p.+?>.+?<\/p>
-            <div.+?>
-            <p>(?P<fix>[\s\S]+?)<\/p>
-            \s+?<\/div>
-            <\/div>
-            <\/td>
-            <td.+?>
-            <div class="vulnerable-versions".+?>
-            (?P<vuln_ver>.+?)
-            <\/div>
-            <\/td>
+                <td.+?>
+                    <ul.+?><li.+?><abbr.+?>\s*(?P<sev>[A-Z])\s*<\/abbr><\/li><\/ul>
+                    <a.+? href="\/vuln\/(?P<tag>[A-Za-z0-9\-]+?)".+?>
+                        (?P<vuln_name>.+?)
+                    <\/a>
+                    (?P<body>[\s\S]+?)
+                <\/td>
+                <td.+?>
+                    <div class="vulnerable-versions".+?>
+                        (?P<vuln_ver>.+?)
+                    <\/div>
+                <\/td>
             <\/tr>
         """.replace('\n', '').replace('    ', '').strip())
 
@@ -45,7 +30,10 @@ class Snyk(Checker):
 
     def format(self, vuln):
         res = ''
-        sev, tag, vuln_name, title, desc, fix, vuln_ver = vuln
+        sev, tag, vuln_name, body, vuln_ver = vuln
+
+        # TODO
+        # parse(body)???
 
         if sev == 'L':
             res += '\033[92m v[L] '

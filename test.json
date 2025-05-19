@@ -1,1 +1,78 @@
-[{"checker": "maven", "mgmt": "maven", "dep": "org.apache.thrift:libthrift", "ver": "0.9.3-1", "vulns": ["CVE-2020-13949", "CVE-2019-0205", "CVE-2018-11798"]}, {"checker": "snyk", "mgmt": "npm", "dep": "axios", "ver": "0.21.1", "vulns": [["M", "SNYK-JS-AXIOS-9292519", "Server-side Request Forgery (SSRF)", "<a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.", "Affected versions of this package are vulnerable to Server-side Request Forgery (SSRF) due to the <code>allowAbsoluteUrls</code> attribute being ignored in the call to the <code>buildFullPath</code> function from the HTTP adapter. An attacker could launch SSRF attacks or exfiltrate sensitive data by tricking applications into sending requests to malicious endpoints.", "Upgrade <code>axios</code> to version 1.8.2 or higher.", "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;1.8.2\" data-v-8f842880>&lt;1.8.2</span></span>"], ["M", "SNYK-JS-AXIOS-6671926", "Cross-site Scripting (XSS)", "<a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.", "Affected versions of this package are vulnerable to Cross-site Scripting (XSS) via <code>setAttribute('href' href)</code> in <code>/axios/dist/axios.js</code> due to improper input sanitization.", "Upgrade <code>axios</code> to version 1.7.8 or higher.", "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;1.7.8\" data-v-8f842880>&lt;1.7.8</span></span>"], ["M", "SNYK-JS-AXIOS-6124857", "Regular Expression Denial of Service (ReDoS)", "<a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.", "Affected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS). An attacker can deplete system resources by providing a manipulated string as input to the format method, causing the regular expression to exhibit a time complexity of <code>O(n^2)</code>. This makes the server to become unable to provide normal service due to the excessive cost and time wasted in processing vulnerable regular expressions.", "Upgrade <code>axios</code> to version 0.29.0, 1.6.3 or higher.", "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;0.29.0\" data-v-8f842880>&lt;0.29.0</span></span><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&gt;=1.0.0 &lt;1.6.3\" data-v-8f842880>&gt;=1.0.0 &lt;1.6.3</span></span>"], ["H", "SNYK-JS-AXIOS-6032459", "Cross-site Request Forgery (CSRF)", "<a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.", "Affected versions of this package are vulnerable to Cross-site Request Forgery (CSRF) due to inserting the <code>X-XSRF-TOKEN</code> header using the secret <code>XSRF-TOKEN</code> cookie value in all requests to any server when the <code>XSRF-TOKEN</code>0 cookie is available, and the <code>withCredentials</code> setting is turned on. If a malicious user manages to obtain this value, it can potentially lead to the XSRF defence mechanism bypass.", "Upgrade <code>axios</code> to version 0.28.0, 1.6.0 or higher.", "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&gt;=0.8.1 &lt;0.28.0\" data-v-8f842880>&gt;=0.8.1 &lt;0.28.0</span></span><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&gt;=1.0.0 &lt;1.6.0\" data-v-8f842880>&gt;=1.0.0 &lt;1.6.0</span></span>"], ["H", "SNYK-JS-AXIOS-1579269", "Regular Expression Denial of Service (ReDoS)", "<a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.", "Affected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the <code>trim</code> function.", "Upgrade <code>axios</code> to version 0.21.3 or higher.", "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;0.21.3\" data-v-8f842880>&lt;0.21.3</span></span>"]]}]
+[
+  {
+    "checker": "maven",
+    "mgmt": "maven",
+    "dep": "org.apache.thrift:libthrift",
+    "ver": "0.9.3-1",
+    "vulns": [
+      "CVE-2020-13949",
+      "CVE-2019-0205",
+      "CVE-2018-11798"
+    ]
+  },
+  {
+    "checker": "snyk",
+    "mgmt": "npm",
+    "dep": "lodash",
+    "ver": "4.17.20",
+    "vulns": [
+      [
+        "H",
+        "SNYK-JS-LODASH-1040724",
+        "Code Injection",
+        "<div class=\"vulns-table__description\" data-snyk-test=\"PackageVulnerabilitiesTable: description\" data-v-16134097><div data-v-16134097><p><a href=\"https://www.npmjs.com/package/lodash\">lodash</a> is a modern JavaScript utility library delivering modularity, performance, &amp; extras.</p>\n<p>Affected versions of this package are vulnerable to Code Injection via <code>template</code>.</p>\n<h3>PoC</h3>\n<pre><code class=\"language-js\">var _ = require('lodash');\n\n_.template('', { variable: '){console.log(process.env)}; with(obj' })()\n</code></pre>\n</div><p class=\"vulns-table__how-to-fix\" data-v-16134097>How to fix Code Injection?</p><div data-v-16134097><p>Upgrade <code>lodash</code> to version 4.17.21 or higher.</p>\n</div></div>",
+        "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;4.17.21\" data-v-8f842880>&lt;4.17.21</span></span>"
+      ],
+      [
+        "M",
+        "SNYK-JS-LODASH-1018905",
+        "Regular Expression Denial of Service (ReDoS)",
+        "<div class=\"vulns-table__description\" data-snyk-test=\"PackageVulnerabilitiesTable: description\" data-v-16134097><div data-v-16134097><p><a href=\"https://www.npmjs.com/package/lodash\">lodash</a> is a modern JavaScript utility library delivering modularity, performance, &amp; extras.</p>\n<p>Affected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the <code>toNumber</code>, <code>trim</code> and <code>trimEnd</code> functions.</p>\n<h3>POC</h3>\n<pre><code>var lo = require('lodash');\n\nfunction build_blank (n) {\nvar ret = \"1\"\nfor (var i = 0; i &lt; n; i++) {\nret += \" \"\n}\n\nreturn ret + \"1\";\n}\n\nvar s = build_blank(50000)\nvar time0 = Date.now();\nlo.trim(s)\nvar time_cost0 = Date.now() - time0;\nconsole.log(\"time_cost0: \" + time_cost0)\n\nvar time1 = Date.now();\nlo.toNumber(s)\nvar time_cost1 = Date.now() - time1;\nconsole.log(\"time_cost1: \" + time_cost1)\n\nvar time2 = Date.now();\nlo.trimEnd(s)\nvar time_cost2 = Date.now() - time2;\nconsole.log(\"time_cost2: \" + time_cost2)\n</code></pre>\n</div><p class=\"vulns-table__how-to-fix\" data-v-16134097>How to fix Regular Expression Denial of Service (ReDoS)?</p><div data-v-16134097><p>Upgrade <code>lodash</code> to version 4.17.21 or higher.</p>\n</div></div>",
+        "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;4.17.21\" data-v-8f842880>&lt;4.17.21</span></span>"
+      ]
+    ]
+  },
+  {
+    "checker": "snyk",
+    "mgmt": "npm",
+    "dep": "axios",
+    "ver": "0.21.1",
+    "vulns": [
+      [
+        "M",
+        "SNYK-JS-AXIOS-9403194",
+        "Server-side Request Forgery (SSRF)",
+        "<div class=\"vulns-table__description\" data-snyk-test=\"PackageVulnerabilitiesTable: description\" data-v-16134097><div data-v-16134097><p><a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.</p>\n<p>Affected versions of this package are vulnerable to Server-side Request Forgery (SSRF) due to not setting <code>allowAbsoluteUrls</code> to <code>false</code> by default when processing a requested URL in <code>buildFullPath()</code>. It may not be obvious that this value is being used with the less safe default, and URLs that are expected to be blocked may be accepted. This is a bypass of the fix for the vulnerability described in <a href=\"https://security.snyk.io/vuln/SNYK-JS-AXIOS-9292519\">CVE-2025-27152</a>.</p>\n</div><p class=\"vulns-table__how-to-fix\" data-v-16134097>How to fix Server-side Request Forgery (SSRF)?</p><div data-v-16134097><p>Upgrade <code>axios</code> to version 0.30.0, 1.8.3 or higher.</p>\n</div></div>",
+        "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;0.30.0\" data-v-8f842880>&lt;0.30.0</span></span><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&gt;=1.0.0 &lt;1.8.3\" data-v-8f842880>&gt;=1.0.0 &lt;1.8.3</span></span>"
+      ],
+      [
+        "M",
+        "SNYK-JS-AXIOS-9292519",
+        "Server-side Request Forgery (SSRF)",
+        "<div class=\"vulns-table__description\" data-snyk-test=\"PackageVulnerabilitiesTable: description\" data-v-16134097><div data-v-16134097><p><a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.</p>\n<p>Affected versions of this package are vulnerable to Server-side Request Forgery (SSRF) due to the <code>allowAbsoluteUrls</code> attribute being ignored in the call to the <code>buildFullPath</code> function from the HTTP adapter. An attacker could launch SSRF attacks or exfiltrate sensitive data by tricking applications into sending requests to malicious endpoints.</p>\n</div><p class=\"vulns-table__how-to-fix\" data-v-16134097>How to fix Server-side Request Forgery (SSRF)?</p><div data-v-16134097><p>Upgrade <code>axios</code> to version 0.30.0, 1.8.2 or higher.</p>\n</div></div>",
+        "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;0.30.0\" data-v-8f842880>&lt;0.30.0</span></span><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&gt;=1.0.0 &lt;1.8.2\" data-v-8f842880>&gt;=1.0.0 &lt;1.8.2</span></span>"
+      ],
+      [
+        "M",
+        "SNYK-JS-AXIOS-6124857",
+        "Regular Expression Denial of Service (ReDoS)",
+        "<div class=\"vulns-table__description\" data-snyk-test=\"PackageVulnerabilitiesTable: description\" data-v-16134097><div data-v-16134097><p><a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.</p>\n<p>Affected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS). An attacker can deplete system resources by providing a manipulated string as input to the format method, causing the regular expression to exhibit a time complexity of <code>O(n^2)</code>. This makes the server to become unable to provide normal service due to the excessive cost and time wasted in processing vulnerable regular expressions.</p>\n</div><p class=\"vulns-table__how-to-fix\" data-v-16134097>How to fix Regular Expression Denial of Service (ReDoS)?</p><div data-v-16134097><p>Upgrade <code>axios</code> to version 0.29.0, 1.6.3 or higher.</p>\n</div></div>",
+        "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;0.29.0\" data-v-8f842880>&lt;0.29.0</span></span><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&gt;=1.0.0 &lt;1.6.3\" data-v-8f842880>&gt;=1.0.0 &lt;1.6.3</span></span>"
+      ],
+      [
+        "H",
+        "SNYK-JS-AXIOS-6032459",
+        "Cross-site Request Forgery (CSRF)",
+        "<div class=\"vulns-table__description\" data-snyk-test=\"PackageVulnerabilitiesTable: description\" data-v-16134097><div data-v-16134097><p><a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.</p>\n<p>Affected versions of this package are vulnerable to Cross-site Request Forgery (CSRF) due to inserting the <code>X-XSRF-TOKEN</code> header using the secret <code>XSRF-TOKEN</code> cookie value in all requests to any server when the <code>XSRF-TOKEN</code>0 cookie is available, and the <code>withCredentials</code> setting is turned on. If a malicious user manages to obtain this value, it can potentially lead to the XSRF defence mechanism bypass.</p>\n</div><p class=\"vulns-table__how-to-fix\" data-v-16134097>How to fix Cross-site Request Forgery (CSRF)?</p><div data-v-16134097><p>Upgrade <code>axios</code> to version 0.28.0, 1.6.0 or higher.</p>\n</div></div>",
+        "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&gt;=0.8.1 &lt;0.28.0\" data-v-8f842880>&gt;=0.8.1 &lt;0.28.0</span></span><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&gt;=1.0.0 &lt;1.6.0\" data-v-8f842880>&gt;=1.0.0 &lt;1.6.0</span></span>"
+      ],
+      [
+        "H",
+        "SNYK-JS-AXIOS-1579269",
+        "Regular Expression Denial of Service (ReDoS)",
+        "<div class=\"vulns-table__description\" data-snyk-test=\"PackageVulnerabilitiesTable: description\" data-v-16134097><div data-v-16134097><p><a href=\"https://www.npmjs.com/package/axios\">axios</a> is a promise-based HTTP client for the browser and Node.js.</p>\n<p>Affected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the <code>trim</code> function.</p>\n</div><p class=\"vulns-table__how-to-fix\" data-v-16134097>How to fix Regular Expression Denial of Service (ReDoS)?</p><div data-v-16134097><p>Upgrade <code>axios</code> to version 0.21.3 or higher.</p>\n</div></div>",
+        "<p class=\"vulnerable-versions__title\" data-v-45d97327></p><span class=\"chip chip--default vulnerable-versions__chip\" data-snyk-test=\"VulnerableVersions: version\" data-v-45d97327 data-v-8f842880><span class=\"chip__value\" title=\"&lt;0.21.3\" data-v-8f842880>&lt;0.21.3</span></span>"
+      ]
+    ]
+  }
+]
