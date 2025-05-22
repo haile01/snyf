@@ -4,7 +4,7 @@ import toml
 from . import Manager
 
 class Maven(Manager):
-    def parse(self, args):
+    def parse(self, args, flags):
         if len(args) == 1:
             print('Usage: snyf/main.py maven <target file>')
             exit()

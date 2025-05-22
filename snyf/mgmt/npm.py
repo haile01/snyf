@@ -4,7 +4,7 @@ from . import Manager
 from ..utils.fetch_pipeline import Pipeline
 
 class Npm(Manager):
-    def parse(self, args):
+    def parse(self, args, flags):
         pipeline = Pipeline()
         if os.path.isfile(self.cwd + '/package-lock.json'):
             return pipeline.load(self.cwd + '/package-lock.json').parse({ "{packages..dependencies.$}": "{$}" })

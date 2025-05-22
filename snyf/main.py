@@ -31,6 +31,7 @@ from .mgmt.npm import Npm as NpmMgmt
 from .mgmt.pnpm import Pnpm as PnpmMgmt
 from .mgmt.pip import Pip as PipMgmt
 from .utils.fetch_pipeline import Pipeline
+from .utils.parse_args import parse_args
 
 snyk = Snyk()
 maven = Maven()
@@ -61,37 +62,21 @@ def test_fetch():
 
     print(pipeline.parse(schema, pretty=True))
 
-def parse_args():
-    if len(sys.argv) == 1:
-        print('Usage: synf/main.py <npm|maven|test> [target file]')
-        exit()
-    args = sys.argv[1:]
-    mgmt = ''
-    deps = {}
+def parse_deps():
+    available_parsers = {
+        'npm': npm_mgmt.parse,
+        'pnpm': pnpm_mgmt.parse,
+        'maven': maven_mgmt.parse,
+        'pip': pip_mgmt.parse,
+    }
 
-    if args[0] == 'test':
-        subject = 'template' if len(args) == 1 else args[1]
-        if subject == 'template':
-            test_template()
-        if subject == 'fetch':
-            test_fetch()
+    parser, mgmt, args, flags = parse_args(available_parsers)
+    deps = parser(args, flags)
 
-        exit()
-
-    # Dep manager
-    if args[0] == 'npm':
-        return 'npm', npm_mgmt.parse(args)
-    if args[0] == 'pnpm':
-        return 'npm', pnpm_mgmt.parse(args) # NOTE: yep
-    if args[0] == 'maven':
-        return 'maven', maven_mgmt.parse(args)
-    if args[0] == 'pip':
-        return 'pip', pip_mgmt.parse(args)
-
-    raise Exception('Unsupported dependency manager...')
+    return mgmt, deps
 
 if __name__ == "__main__":
-    mgmt, deps = parse_args()
+    mgmt, deps = parse_deps()
     print(f'> Found {str(len(deps))} direct dependencies')
     for dep in deps:
         ver = deps[dep]
