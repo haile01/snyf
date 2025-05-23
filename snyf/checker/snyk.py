@@ -36,8 +36,6 @@ class Snyk(Checker):
         res = ''
         sev, tag, vuln_name, body, vuln_ver = vuln
 
-        print(sev, vuln_name, vuln_ver)
-
         # TODO
         # parse(body)???
 
@@ -64,7 +62,6 @@ class Snyk(Checker):
             return ' '.join(parsed)
 
         vers = re.findall(self.version_template, vers)
-        print('vers', vers)
         for ver in vers:
             ver = ver.replace('&lt;', '<').replace('&gt;', '>')
             constraints = ver.split(' ')
