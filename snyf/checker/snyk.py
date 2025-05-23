@@ -25,12 +25,18 @@ class Snyk(Checker):
             <span.+?><span.+?title="(.+?)".+?</span>.*?</span>
         """.replace('\n', '').replace('    ', '').strip())
 
+        self.parsed_version_template = re.compile("""
+            title="([\[\(][0-9a-zA-Z\-\.]*,[0-9a-zA-Z\-\.]*[\]\)])
+        """.replace('\n', '').replace('    ', '').strip())
+
     def clean_comment(self, text):
         return text.replace('<!--]-->', '').replace('<!--[-->', '').replace('<!---->', '')
 
     def format(self, vuln):
         res = ''
         sev, tag, vuln_name, body, vuln_ver = vuln
+
+        print(sev, vuln_name, vuln_ver)
 
         # TODO
         # parse(body)???
@@ -52,7 +58,13 @@ class Snyk(Checker):
 
     def parse_vers(self, vers):
         res = []
+        # NOTE: In case Snyk did that for us alr
+        parsed = re.findall(self.parsed_version_template, vers)
+        if len(parsed):
+            return ' '.join(parsed)
+
         vers = re.findall(self.version_template, vers)
+        print('vers', vers)
         for ver in vers:
             ver = ver.replace('&lt;', '<').replace('&gt;', '>')
             constraints = ver.split(' ')
