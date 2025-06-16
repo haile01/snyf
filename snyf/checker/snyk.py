@@ -6,32 +6,18 @@ class Snyk(Checker):
     def __init__(self):
         self.vuln_template = re.compile("""
             <tr.+?>
-            <td.+?>
-            <ul.+?>
-            <li.+?>
-            <abbr.+?>
-             (?P<sev>[A-Z])<\/abbr>
-            <\/li>
-            <\/ul>
-            <a.+? href="\/vuln\/(?P<tag>[A-Za-z0-9\-]+?)".+?>
-            (?P<vuln_name>.+?)
-            <\/a>
-            <div.+?>
-            <div.+?>
-            <p>(?P<title>[\s\S]+?)<\/p>
-            \s+?<p>(?P<desc>[\s\S]+?)<\/p>
-            \s+?<\/div>
-            <p.+?>.+?<\/p>
-            <div.+?>
-            <p>(?P<fix>[\s\S]+?)<\/p>
-            \s+?<\/div>
-            <\/div>
-            <\/td>
-            <td.+?>
-            <div class="vulnerable-versions".+?>
-            (?P<vuln_ver>.+?)
-            <\/div>
-            <\/td>
+                <td.+?>
+                    <ul.+?><li.+?><abbr.+?>\s*(?P<sev>[A-Z])\s*<\/abbr><\/li><\/ul>
+                    <a.+? href="\/vuln\/(?P<tag>[A-Za-z0-9\-]+?)".+?>
+                        (?P<vuln_name>.+?)
+                    <\/a>
+                    (?P<body>[\s\S]+?)
+                <\/td>
+                <td.+?>
+                    <div class="vulnerable-versions".+?>
+                        (?P<vuln_ver>.+?)
+                    <\/div>
+                <\/td>
             <\/tr>
         """.replace('\n', '').replace('    ', '').strip())
 
@@ -45,6 +31,28 @@ class Snyk(Checker):
 
     def clean_comment(self, text):
         return text.replace('<!--]-->', '').replace('<!--[-->', '').replace('<!---->', '')
+
+    def format(self, vuln):
+        res = ''
+        sev, tag, vuln_name, body, vuln_ver = vuln
+
+        # TODO
+        # parse(body)???
+
+        if sev == 'L':
+            res += '\033[92m v[L] '
+        elif sev == 'M':
+            res += '\033[93m -[M] '
+        elif sev == 'H':
+            res += '\033[91m ^[H] '
+        else:
+            res += '\033[91m ^[C] '
+
+        res += vuln_name + '\033[0m '
+        res += self.parse_vers(vuln_ver) + ' '
+        res += 'https://security.snyk.io/vuln/' + tag + ' '
+
+        return res
 
     def parse_vers(self, vers):
         res = []
@@ -60,6 +68,10 @@ class Snyk(Checker):
             tmp = {}
             cur = ''
             for c in constraints:
+                if c == '*':
+                    # This lib is fcked hard
+                    continue
+
                 key = 'upper' if c[0] == '<' else 'lower'
                 if c[1] == '=':
                     tmp[key] = {'value': c[2:], 'eq': True}

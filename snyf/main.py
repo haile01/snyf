@@ -29,13 +29,19 @@ from .checker.maven import Maven
 from .mgmt.maven import Maven as MavenMgmt
 from .mgmt.npm import Npm as NpmMgmt
 from .utils.table_test import test as table_test
+from .mgmt.pnpm import Pnpm as PnpmMgmt
+from .mgmt.pip import Pip as PipMgmt
+from .utils.fetch_pipeline import Pipeline
+from .utils.parse_args import parse_args
 
 snyk = Snyk()
 maven = Maven()
 maven_mgmt = MavenMgmt()
 npm_mgmt = NpmMgmt()
+pnpm_mgmt = PnpmMgmt()
+pip_mgmt = PipMgmt()
 
-def snyk_test():
+def test_template():
     # Just to make sure if Snyk keeps the same template format
     test_cases = json.loads(open('test.json', 'r').read())
     for test in test_cases:
@@ -44,36 +50,34 @@ def snyk_test():
         vulns = checker.check(test['dep'], test['ver'])
         assert json.dumps(vulns) == json.dumps(test['vulns']), 'Template is wrong...'
 
-    exit()
+    print('\033[92m \033[1m Test ran successfully \033[0m \033[0m')
 
-def parse_args():
-    if len(sys.argv) == 1:
-        print('Usage: synf/main.py <npm|maven|test> [target file]')
-        exit()
-    args = sys.argv[1:]
-    mgmt = ''
-    deps = {}
+def test_fetch():
+    pipeline = Pipeline()
 
-    if args[0] == 'test':
-        sub = args[1] if len(args) > 1 else 'snyk'
-        if sub == 'snyk':
-            snyk_test()
-        elif sub == 'table':
-            table_test()
-        else:
-            print('CTF idea?')
-        exit()
+    pipeline.load('test.yaml')
 
-    # Dep manager
-    if args[0] == 'npm':
-        return 'npm', npm_mgmt.parse(args)
-    elif args[0] == 'maven':
-        return 'maven', maven_mgmt.parse(args)
-    else:
-        raise Exception('Unsupported dependency manager...')
+    schema = {
+        "{dependencies.$}": "{specifier}",
+    }
+
+    print(pipeline.parse(schema, pretty=True))
+
+def parse_deps():
+    available_parsers = {
+        'npm': npm_mgmt.parse,
+        'pnpm': pnpm_mgmt.parse,
+        'maven': maven_mgmt.parse,
+        'pip': pip_mgmt.parse,
+    }
+
+    parser, mgmt, args, flags = parse_args(available_parsers)
+    deps = parser(args, flags)
+
+    return mgmt, deps
 
 if __name__ == "__main__":
-    mgmt, deps = parse_args()
+    mgmt, deps = parse_deps()
     print(f'> Found {str(len(deps))} direct dependencies')
     for dep in deps:
         ver = deps[dep]
