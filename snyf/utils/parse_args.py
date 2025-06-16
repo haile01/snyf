@@ -27,13 +27,13 @@ def parse_args(parsers):
     if args[0] == 'npm':
         parser = parsers['npm']
         mgmt = 'npm'
-    if args[0] == 'pnpm':
+    elif args[0] == 'pnpm':
         parser = parsers['pnpm']
         mgmt = 'npm' # NOTE: yep
-    if args[0] == 'maven':
+    elif args[0] == 'maven':
         parser = parsers['maven']
         mgmt = 'maven'
-    if args[0] == 'pip':
+    elif args[0] == 'pip':
         parser = parsers['pip']
         mgmt = 'pip'
     else:

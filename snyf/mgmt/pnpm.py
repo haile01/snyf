@@ -10,7 +10,12 @@ class Pnpm(Manager):
     def parse(self, args, flags):
         pipeline = Pipeline()
         if os.path.isfile(self.cwd + '/' + self.target):
-            return pipeline.load(self.cwd + '/' + self.target).parse({ "{dependencies.$}": "{specifier}" })
+            pipeline.load(self.cwd + '/' + self.target)
+            res = pipeline.parse({ "{dependencies.$}": "{specifier}" })
+            if res == {}:
+                res = pipeline.parse({"{importers.{dot}.dependencies.$}": "{specifier}"})
+            
+            return res
         else:
             print(f'> {self.target} not found. Looking at package.json instead')
             print('> Warning: actual results maybe incorrect')

@@ -68,6 +68,10 @@ class Snyk(Checker):
             tmp = {}
             cur = ''
             for c in constraints:
+                if c == '*':
+                    # This lib is fcked hard
+                    continue
+
                 key = 'upper' if c[0] == '<' else 'lower'
                 if c[1] == '=':
                     tmp[key] = {'value': c[2:], 'eq': True}

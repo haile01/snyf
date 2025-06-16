@@ -58,7 +58,7 @@ class Pipeline:
         elif type(schema) is dict:
             if type(context) is not dict:
                 if strict:
-                    raise(f"Object {context} is not a list")
+                    raise(f"Object {context} is not a dictionary")
 
                 return {}
 
@@ -67,12 +67,18 @@ class Pipeline:
                 parsed_key = self.__parse(context, key)
                 if type(parsed_key) is list:
                     for p in parsed_key:
-                        res[p['value']] = self.__parse(p['context'], schema[key])
-                else:
+                        parsed_value = self.__parse(p['context'], schema[key])
+                        res[p['value']] = parsed_value 
+                elif type(parsed_key) is str:
                     if type(schema[key]) is str and '$' in schema[key]:
                         raise Exception("Object value can't spread tho...")
 
                     res[parsed_key] = self.__parse(context, schema[key])
+                elif parsed_key is None:
+                    # verbosity?
+                    pass 
+                else:
+                    raise Exception("Invalid state, something happened...")
 
             return res
 
@@ -83,7 +89,7 @@ class Pipeline:
             if self.__is_data_path(schema):
                 schema = schema[1:-1]
                 schema = schema.split('.')
-                tmp = context
+                tmp_context = context
                 for i in range(len(schema)):
                     attr = schema[i]
                     if attr == '$':
@@ -91,24 +97,28 @@ class Pipeline:
                             raise("Can only spread once for each data path")
 
                         res = []
-                        for key in tmp:
-                            value = key if i == len(schema) - 1 else self.__parse(tmp[key], self.__construct_path(schema[i+1:]), is_spread=True)
+                        for key in tmp_context:
+                            value = key if i == len(schema) - 1 else self.__parse(tmp_context[key], self.__construct_path(schema[i+1:]), is_spread=True)
                             res.append({
                                 'value': value,
-                                'context': tmp[key]
+                                'context': tmp_context[key]
                             })
 
                         return res
 
-                    if attr not in tmp:
+                    # NOTE: fck pnpm and their _subrepo_ bullsh1t
+                    if attr == '{dot}':
+                        attr = '.'
+
+                    if attr not in tmp_context:
                         if strict:
-                            raise(f"Object {tmp} doesn't contain attribute {attr}")
+                            raise(f"Object {tmp_context} doesn't contain attribute {attr}")
 
                         return None
 
-                    tmp = tmp[attr]
+                    tmp_context = tmp_context[attr]
 
-                return tmp
+                return tmp_context
             else:
                 return schema
 
