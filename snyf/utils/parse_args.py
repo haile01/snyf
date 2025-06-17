@@ -8,15 +8,6 @@ def parse_args(parsers):
     mgmt = ''
     deps = {}
 
-    if args[0] == 'test':
-        subject = 'template' if len(args) == 1 else args[1]
-        if subject == 'template':
-            test_template()
-        if subject == 'fetch':
-            test_fetch()
-
-        exit()
-
     res = {}
 
     # NOTE: Dear future me,
