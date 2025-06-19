@@ -130,22 +130,20 @@ class Table:
         if self.col_num != 0:
             row = row[:self.col_num]
         self.col_cnt = max(self.col_cnt, len(row))
-        row_format = self.format.split('|')
+        global_format = self.format.split('|')
+        format_idx = 0
+        row_format = [''] * len(row)
         for i in range(len(row)):
-            if type(row[i]) is str:
-                if len(row_format) <= i:
-                    row_format.append('')
-            elif type(row[i]) is tuple:
-                if len(row_format) <= i:
-                    row_format.append(row[i][1])
-                else:
-                    row_format[i] += row[i][1]
-                    # plz help...
-                    merge_cnt = row[i][1].count('-')
-                    if merge_cnt > 1:
-                        row_format = row_format[:i+1] + row_format[i+merge_cnt:]
+            row_format[i] = global_format[format_idx]
+            if type(row[i]) is tuple:
+                row_format[i] += row[i][1]
+                merge_cnt = row[i][1].count('-')
+                if merge_cnt > 1:
+                    format_idx += merge_cnt - 1
 
                 row[i] = row[i][0]
+
+            format_idx += 1
 
         self.rows.append(list(map(lambda x: Cell(x), row)))
         self.row_formats.append(row_format)
@@ -258,7 +256,6 @@ class Table:
         res = ''
         width, col_sizes = self.allocate()
         # print('Allocation', width, col_sizes)
-        # https://stackoverflow.com/a/71309268
         hline = '+'
         for size in col_sizes:
             hline += '-' * (size + 2)
