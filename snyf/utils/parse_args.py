@@ -2,7 +2,7 @@ import sys
 
 def parse_args(parsers):
     if len(sys.argv) == 1:
-        print('Usage: synf/main.py <npm|maven|test> [target file]')
+        print('Usage: snyf/main.py <npm|maven|test> [target file]')
         exit()
     args = sys.argv[1:]
     mgmt = ''

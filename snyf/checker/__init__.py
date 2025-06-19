@@ -1,3 +1,5 @@
+from ..utils.table import Table
+
 class Checker:
     def parse(self, args):
         raise Exception("Not implemented")
@@ -7,18 +9,19 @@ class Checker:
 
     def render(self, url, vulns):
         print(url)
-        data = []
-        color = {
-            'low': '\033[92m',
-            'medium': '\033[93m',
-            'high': '\033[91m',
-            'none': '\033[1m',
-            'close': '\033[0m'
+        color_map = {
+            'none': 'b',
+            'L': 's',
+            'M': 'w',
+            'H': 'e',
+            'C': 'eb',
         }
+        table = Table('|*|')
         for vuln in vulns:
-            row = []
-            row.append(color[vuln['sev']] + vuln['name'] + color['close'])
-            row.append(vuln['affected'])
-            row.append(vuln['url'])
-            data.append(row)
+            table.add_row([
+                (f"[{vuln['sev']}] {vuln['name']}", color_map[vuln['sev']]),
+                vuln['affected'],
+                (vuln['url'], 'i')
+            ])
 
+        print(table)

@@ -34,6 +34,6 @@ class Maven(Checker):
                 'url': 'https://cve.mitre.org/cgi-bin/cvename.cgi?name' + vuln
             })
 
-        self.render(url, data)
+        # self.render(url, data)
 
-        return direct
+        return data

@@ -1,17 +1,36 @@
 import sys
 from .utils.table import Table
+from .checker.snyk import Snyk
+from .checker.maven import Maven
 
 def parse_test():
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         subject = 'template' if len(sys.argv) == 2 else sys.argv[2]
         if subject == 'template':
             test_template()
-        if subject == 'fetch':
+        elif subject == 'fetch':
             test_fetch()
-        if subject == 'table':
+        elif subject == 'table':
             test_table()
+        elif subject == 'check':
+            test_check(sys.argv[3:])
+        else:
+            print('Wrong test command bro...')
 
         exit()
+
+def test_check(args):
+    if len(args) < 2:
+        print('Usage: snyf/main.py test check <snyk/maven> <dep:ver>')
+
+    checker = args[0]
+    dep, ver = args[1].split(':')
+    if checker == 'snyk':
+        Snyk().check(dep, ver)
+    elif checker == 'maven':
+        Maven().check(dep, ver)
+    else:
+        print("Haven't implemented that...")
 
 def test_template():
     # Just to make sure if Snyk keeps the same template format
@@ -51,7 +70,7 @@ def test_table():
             '*e|w|ib',
             [
                 ['a' * 100, 'b', 'a', ('ahihi', 'bold')],
-                ['a', 'b' * 200, 'a'],
+                ['a', 'b' * 200, ' ' * 30 + 'https://example.org'],
                 ['a', 'b', 'a' * 200],
             ]
         ),

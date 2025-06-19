@@ -1,5 +1,94 @@
 import os
+import re
 from .color import Color
+
+class Link:
+    def __init__(self, url):
+        self.url = url
+        self.text = url
+
+    def __str__(self):
+        return f"\033]8;{''};{self.url}\033\\{self.text}\033]8;;\033\\"
+
+    def __len__(self):
+        return len(self.text)
+
+    def slice(self, pos, cut=False):
+        res = Link(self.url)
+        res.text = self.text[:pos]
+        if cut:
+            self.text = self.text[pos:]
+
+        return res
+
+class Cell:
+    def __init__(self, s):
+        url_pattern = re.compile(r'(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)')
+        self.s = []
+        pos = 0
+        while True:
+            matched = url_pattern.search(s, pos)
+            if not matched:
+                break
+
+            start, end = matched.span()
+            if pos < start:
+                self.s.append(s[pos:start])
+            self.s.append(Link(s[start:end]))
+            pos = end
+
+        self.s.append(s[pos:])
+
+    def __len__(self):
+        return sum(map(lambda x: len(x), self.s))
+
+    def clear(self):
+        self.s = []
+        return self
+
+    def append(self, s):
+        self.s.append(s)
+
+    def slice(self, start, end, cut=False):
+        # TODO: when I need it lol
+        pass
+
+    def slice(self, pos, cut=False):
+        cut_len = None
+        cur_len = 0
+        res = Cell('').clear()
+        idx = 0
+        while cur_len < pos and idx < len(self.s):
+            if cur_len + len(self.s[idx]) <= pos:
+                cut_len = None
+                res.append(self.s[idx])
+                cur_len += len(self.s[idx])
+                idx += 1
+            else:
+                cut_len = pos - cur_len
+                if type(self.s[idx]) is Link:
+                    res.append(self.s[idx].slice(cut_len, cut))
+                else:
+                    res.append(self.s[idx][:cut_len])
+
+                cur_len = pos
+
+        if cut:
+            self.s = self.s[idx:]
+            if cut_len is not None and len(self.s) and type(self.s[0]) is str:
+                self.s[0] = self.s[0][cut_len:]
+
+        return res
+
+    def ljust(self, total_len, c):
+        if len(c) > 1:
+            raise Exception('One character plz')
+
+        pad_len = total_len - len(self)
+        return str(self) + c * pad_len
+
+    def __str__(self):
+        return ''.join(map(lambda x: str(x), self.s))
 
 class Table:
     def __init__(self, format = "", col_num = 0, width = os.get_terminal_size()[0]):
@@ -52,7 +141,7 @@ class Table:
                     row_format[i] += row[i][1]
                 row[i] = row[i][0]
 
-        self.rows.append(row)
+        self.rows.append(list(map(lambda x: Cell(x), row)))
         self.row_formats.append(row_format)
 
     def allocate(self):
@@ -97,9 +186,10 @@ class Table:
             base = 0
             non_fixed = []
             warn_fix = False
+            warn_threshold = self.width // 3
             for i in range(self.col_num):
                 if '*' in cols[i]:
-                    if not warn_fix and max_len[i] > 10:
+                    if not warn_fix and max_len[i] > warn_threshold:
                         print(self.__colored('b', "Warning: text is a bit long for a fixed column..."))
                         warn_fix = True
 
@@ -121,10 +211,13 @@ class Table:
             res[non_fixed[-1]] = avail_len - sum(res)
             return self.width, res
 
+    def link(uri, label):
+        return f"\033]8;{''};{uri}\033\\{label}\033]8;;\033\\"
+
     def __str__(self):
         res = ''
         width, col_sizes = self.allocate()
-        print('Allocation', width, col_sizes)
+        # print('Allocation', width, col_sizes)
 		# https://stackoverflow.com/a/71309268
         hline = '+'
         for size in col_sizes:
@@ -136,7 +229,7 @@ class Table:
         res += hline
         for _ in range(len(self.rows)):
             row = self.rows[_]
-            row += [''] * (self.col_num - len(row))
+            row += [Cell('')] * (self.col_num - len(row))
             row_format = self.row_formats[_]
             row_format += [''] * (self.col_num - len(row_format))
             line = ''
@@ -146,10 +239,9 @@ class Table:
                 for i in range(self.col_num):
                     line += self.__colored(
                         row_format[i],
-                        row[i][:col_sizes[i]].ljust(col_sizes[i], ' ')
+                        row[i].slice(col_sizes[i], True).ljust(col_sizes[i], ' ')
                     )
-                    row[i] = row[i][col_sizes[i]:]
-                    if row[i] == '':
+                    if len(row[i]) == 0:
                         processing[i] = False
 
                     line += ' | '

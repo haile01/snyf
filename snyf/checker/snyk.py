@@ -96,7 +96,7 @@ class Snyk(Checker):
 
     def format(self, vuln):
         res = ''
-        sev, tag, vuln_name, title, desc, fix, vuln_ver = vuln
+        sev, tag, vuln_name, body, vuln_ver = vuln
 
         if sev == 'L':
             res += '\033[92m v[L] '
@@ -122,18 +122,19 @@ class Snyk(Checker):
         print("\033[96m= Vulnerabilities from Snyk =\033[0m")
         data = []
         for vuln in vulns:
-            sev, tag, vuln_name, title, desc, fix, vuln_ver = vuln
+            sev, tag, vuln_name, body, vuln_ver = vuln
             sev_map = {
                 'L': 'low',
                 'M': 'medium',
-                'H': 'high'
+                'H': 'high',
+                'C': 'critical'
             }
             data.append({
                 'name': vuln_name,
-                'sev': sev_map[sev],
+                'sev': sev,
                 'affected': self.parse_vers(vuln_ver),
                 'url': 'https://security.snyk.io/vuln/' + tag
             })
         self.render(url, data)
 
-        return vulns
+        return data
