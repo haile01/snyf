@@ -68,3 +68,9 @@ if __name__ == "__main__":
         snyk.check(mgmt + '/' + dep, ver)
         if mgmt == "maven":
             maven.check(dep, ver)
+
+    print("\033[96m= Vulnerabilities from Snyk =\033[0m")
+    snyk.render()
+    if mgmt == "maven":
+        print("\033[96m= Vulnerabilities from Maven =\033[0m")
+        maven.render()

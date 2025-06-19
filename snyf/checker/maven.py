@@ -4,6 +4,7 @@ from . import Checker
 
 class Maven(Checker):
     def __init__(self):
+        super().__init__()
         self.vuln_template = re.compile("""
             <a class="vuln" href="https://cve\.mitre\.org.+?>(.+?)</a>
         """.replace('\n', '').replace('    ', '').strip())
@@ -34,6 +35,6 @@ class Maven(Checker):
                 'url': 'https://cve.mitre.org/cgi-bin/cvename.cgi?name' + vuln
             })
 
-        # self.render(url, data)
+        self.update(f'{dep}@{ver}', url, data)
 
         return data

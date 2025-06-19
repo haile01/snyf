@@ -103,10 +103,11 @@ class Table:
             'b': Color('\033[1m'),  # bold
             'u': Color('\033[4m')   # underline
         }
+        self.is_header = []
         self.rows = []
         self.row_formats = []
         self.width = width
-        self.format = format
+        self.format = format.replace('-', '') # wdym u want all cells in a column to be "merged"?
         # NOTE: col_cnt is the actual data
         #       col_num is fixed in initialization
         self.col_cnt = 0
@@ -125,7 +126,7 @@ class Table:
         for row in rows:
             self.add_row(row)
 
-    def add_row(self, row):
+    def add_row(self, row, header=False):
         if self.col_num != 0:
             row = row[:self.col_num]
         self.col_cnt = max(self.col_cnt, len(row))
@@ -139,10 +140,16 @@ class Table:
                     row_format.append(row[i][1])
                 else:
                     row_format[i] += row[i][1]
+                    # plz help...
+                    merge_cnt = row[i][1].count('-')
+                    if merge_cnt > 1:
+                        row_format = row_format[:i+1] + row_format[i+merge_cnt:]
+
                 row[i] = row[i][0]
 
         self.rows.append(list(map(lambda x: Cell(x), row)))
         self.row_formats.append(row_format)
+        self.is_header.append(header)
 
     def allocate(self):
         # TODO: test this throughoutly
@@ -159,14 +166,30 @@ class Table:
             self.col_num = self.col_cnt
 
         avg_len = [0] * self.col_num
+        avg_cnt = [0] * self.col_num
         max_len = [0] * self.col_num
-        for row in self.rows:
+        for _ in range(len(self.rows)):
+            row = self.rows[_]
+            row_format = self.row_formats[_]
+            ignore_cnt = 0
+            idx = 0
             for i in range(len(row)):
                 if i >= self.col_num:
                     break
 
-                avg_len[i] += len(row[i])
-                max_len[i] = max(max_len[i], len(row[i]))
+                # Yep this means fixed columns won't work with
+                # merged cells, but who does that anw?
+                if '-' in row_format[i]:
+                    idx += row_format[i].count('-')
+                    continue
+
+                avg_len[idx] += len(row[i])
+                avg_cnt[idx] += 1
+                max_len[idx] = max(max_len[idx], len(row[i]))
+                idx += 1
+
+        for i in range(self.col_num):
+            avg_len[i] /= avg_cnt[i]
 
         # | ... | ... | ... |
         avail_len = self.width - (3 * (self.col_num + 1) - 2)
@@ -211,35 +234,56 @@ class Table:
             res[non_fixed[-1]] = avail_len - sum(res)
             return self.width, res
 
-    def link(uri, label):
-        return f"\033]8;{''};{uri}\033\\{label}\033]8;;\033\\"
+    def merged_cells(self, row_format, col_sizes):
+        cur_sizes = []
+
+        idx = 0
+        merge_cnt = 0
+        for size in col_sizes:
+            merge_cnt -= 1
+            if merge_cnt > 0:
+                cur_sizes[-1] += size + 3 # " | "
+                continue
+
+            row = row_format[idx]
+            if '-' in row:
+                merge_cnt = row.count('-')
+
+            cur_sizes.append(size)
+            idx += 1
+
+        return cur_sizes
 
     def __str__(self):
         res = ''
         width, col_sizes = self.allocate()
         # print('Allocation', width, col_sizes)
-		# https://stackoverflow.com/a/71309268
+        # https://stackoverflow.com/a/71309268
         hline = '+'
         for size in col_sizes:
             hline += '-' * (size + 2)
             hline += '+'
         hline += '\n'
+        header_hline = hline.replace('-', '=')
 
         res = ''
-        res += hline
-        for _ in range(len(self.rows)):
-            row = self.rows[_]
-            row += [Cell('')] * (self.col_num - len(row))
-            row_format = self.row_formats[_]
-            row_format += [''] * (self.col_num - len(row_format))
+        res += header_hline if self.is_header[0] else hline
+        for idx in range(len(self.rows)):
+            row_format = self.row_formats[idx]
+            cur_sizes = self.merged_cells(row_format, col_sizes)
+            col_num = len(cur_sizes)
+            row_format += [''] * (col_num - len(row_format))
+            row = self.rows[idx]
+            row += [Cell('')] * (col_num - len(row))
+
             line = ''
             processing = list(map(lambda x: len(x) > 0, row))
             while any(processing) > 0:
                 line += '| '
-                for i in range(self.col_num):
+                for i in range(col_num):
                     line += self.__colored(
                         row_format[i],
-                        row[i].slice(col_sizes[i], True).ljust(col_sizes[i], ' ')
+                        row[i].slice(cur_sizes[i], True).ljust(cur_sizes[i], ' ')
                     )
                     if len(row[i]) == 0:
                         processing[i] = False
@@ -248,6 +292,10 @@ class Table:
 
                 line = line[:-1] + '\n'
             res += line
-            res += hline
+
+            if self.is_header[idx] or (idx + 1 < len(self.is_header) and self.is_header[idx + 1]):
+                res += header_hline
+            else:
+                res += hline
 
         return res

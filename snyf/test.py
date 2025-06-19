@@ -26,11 +26,14 @@ def test_check(args):
     checker = args[0]
     dep, ver = args[1].split(':')
     if checker == 'snyk':
-        Snyk().check(dep, ver)
+        checker = Snyk()
     elif checker == 'maven':
-        Maven().check(dep, ver)
+        checker = Maven()
     else:
         print("Haven't implemented that...")
+
+    checker.check(dep, ver)
+    checker.render()
 
 def test_template():
     # Just to make sure if Snyk keeps the same template format
@@ -56,6 +59,16 @@ def test_fetch():
 
 def test_table():
     cases = [
+        # merge case
+        (
+            '|huh|b',
+            [
+                ['aaaaa', 'bbbb', 'c'],
+                [('merged here', 'e--'), ('not here', 'iu')],
+                [('C H O N K', '---b')],
+                [('M O A R R R R R R R', '----pu')]
+            ]
+        ),
         # Happy case
         (
             'w||s|',

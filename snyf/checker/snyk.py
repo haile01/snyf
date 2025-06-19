@@ -4,6 +4,7 @@ from . import Checker
 
 class Snyk(Checker):
     def __init__(self):
+        super().__init__()
         self.vuln_template = re.compile("""
             <tr.+?>
                 <td.+?>
@@ -119,7 +120,6 @@ class Snyk(Checker):
         if not vulns:
             return
 
-        print("\033[96m= Vulnerabilities from Snyk =\033[0m")
         data = []
         for vuln in vulns:
             sev, tag, vuln_name, body, vuln_ver = vuln
@@ -135,6 +135,6 @@ class Snyk(Checker):
                 'affected': self.parse_vers(vuln_ver),
                 'url': 'https://security.snyk.io/vuln/' + tag
             })
-        self.render(url, data)
 
+        self.update(f'{dep}@{ver}', url, data)
         return data
