@@ -4,6 +4,7 @@ from . import Checker
 
 class Snyk(Checker):
     def __init__(self):
+        super().__init__()
         self.vuln_template = re.compile("""
             <tr.+?>
                 <td.+?>
@@ -94,6 +95,23 @@ class Snyk(Checker):
 
         return ' '.join(res)
 
+    def format(self, vuln):
+        res = ''
+        sev, tag, vuln_name, body, vuln_ver = vuln
+
+        if sev == 'L':
+            res += '\033[92m v[L] '
+        elif sev == 'M':
+            res += '\033[93m -[M] '
+        else:
+            res += '\033[91m ^[H] '
+
+        res += vuln_name + '\033[0m '
+        res += self.parse_vers(vuln_ver) + ' '
+        res += 'https://security.snyk.io/vuln/' + tag + ' '
+
+        return res
+
     def check(self, dep, ver):
         url = f'https://security.snyk.io/package/{dep}/{ver}'
         r = requests.get(url)
@@ -102,8 +120,21 @@ class Snyk(Checker):
         if not vulns:
             return
 
-        print("\033[96m= Vulnerabilities from Snyk =\033[0m")
+        data = []
         for vuln in vulns:
-            print(self.format(vuln))
+            sev, tag, vuln_name, body, vuln_ver = vuln
+            sev_map = {
+                'L': 'low',
+                'M': 'medium',
+                'H': 'high',
+                'C': 'critical'
+            }
+            data.append({
+                'name': vuln_name,
+                'sev': sev,
+                'affected': self.parse_vers(vuln_ver),
+                'url': 'https://security.snyk.io/vuln/' + tag
+            })
 
-        return vulns
+        self.update(f'{dep}@{ver}', url, data)
+        return data

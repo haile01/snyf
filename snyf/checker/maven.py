@@ -4,6 +4,7 @@ from . import Checker
 
 class Maven(Checker):
     def __init__(self):
+        super().__init__()
         self.vuln_template = re.compile("""
             <a class="vuln" href="https://cve\.mitre\.org.+?>(.+?)</a>
         """.replace('\n', '').replace('    ', '').strip())
@@ -24,8 +25,16 @@ class Maven(Checker):
         if len(direct) == 0:
             return
 
+        data = []
         print("\033[96m= Direct vulnerabilities from Maven repo =\033[0m")
         for vuln in direct:
-            print(f"- https://cve.mitre.org/cgi-bin/cvename.cgi?name=\033[91m{vuln}\033[0m")
+            data.append({
+                'name': vuln,
+                'sev': 'none',
+                'affected': ' ', # TODO
+                'url': 'https://cve.mitre.org/cgi-bin/cvename.cgi?name' + vuln
+            })
 
-        return direct
+        self.update(f'{dep}@{ver}', url, data)
+
+        return data

@@ -32,6 +32,7 @@ from .mgmt.pnpm import Pnpm as PnpmMgmt
 from .mgmt.pip import Pip as PipMgmt
 from .utils.fetch_pipeline import Pipeline
 from .utils.parse_args import parse_args
+from .test import parse_test
 
 snyk = Snyk()
 maven = Maven()
@@ -39,28 +40,6 @@ maven_mgmt = MavenMgmt()
 npm_mgmt = NpmMgmt()
 pnpm_mgmt = PnpmMgmt()
 pip_mgmt = PipMgmt()
-
-def test_template():
-    # Just to make sure if Snyk keeps the same template format
-    test_cases = json.loads(open('test.json', 'r').read())
-    for test in test_cases:
-        checker = snyk if test['checker'] == 'snyk' else maven
-        test['dep'] = test['mgmt'] + '/' + test['dep'] if test['checker'] == 'snyk' else test['dep']
-        vulns = checker.check(test['dep'], test['ver'])
-        assert json.dumps(vulns) == json.dumps(test['vulns']), 'Template is wrong...'
-
-    print('\033[92m \033[1m Test ran successfully \033[0m \033[0m')
-
-def test_fetch():
-    pipeline = Pipeline()
-
-    pipeline.load('test.yaml')
-
-    schema = {
-        "{dependencies.$}": "{specifier}",
-    }
-
-    print(pipeline.parse(schema, pretty=True))
 
 def parse_deps():
     available_parsers = {
@@ -76,6 +55,7 @@ def parse_deps():
     return mgmt, deps
 
 if __name__ == "__main__":
+    parse_test()
     mgmt, deps = parse_deps()
     print(f'> Found {str(len(deps))} direct dependencies')
     for dep in deps:
@@ -88,3 +68,9 @@ if __name__ == "__main__":
         snyk.check(mgmt + '/' + dep, ver)
         if mgmt == "maven":
             maven.check(dep, ver)
+
+    print("\033[96m= Vulnerabilities from Snyk =\033[0m")
+    snyk.render()
+    if mgmt == "maven":
+        print("\033[96m= Vulnerabilities from Maven =\033[0m")
+        maven.render()

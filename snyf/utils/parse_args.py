@@ -2,20 +2,11 @@ import sys
 
 def parse_args(parsers):
     if len(sys.argv) == 1:
-        print('Usage: synf/main.py <npm|maven|test> [target file]')
+        print('Usage: snyf/main.py <npm|maven|test> [target file]')
         exit()
     args = sys.argv[1:]
     mgmt = ''
     deps = {}
-
-    if args[0] == 'test':
-        subject = 'template' if len(args) == 1 else args[1]
-        if subject == 'template':
-            test_template()
-        if subject == 'fetch':
-            test_fetch()
-
-        exit()
 
     res = {}
 
