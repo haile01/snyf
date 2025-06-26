@@ -253,6 +253,9 @@ class Table:
         return cur_sizes
 
     def __str__(self):
+        if len(self.rows):
+            return ''
+
         res = ''
         width, col_sizes = self.allocate()
         # print('Allocation', width, col_sizes)

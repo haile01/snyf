@@ -5,6 +5,8 @@ from . import Checker
 class Snyk(Checker):
     def __init__(self):
         super().__init__()
+        self.name = 'Snyk'
+
         self.vuln_template = re.compile("""
             <tr.+?>
                 <td.+?>

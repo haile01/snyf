@@ -5,6 +5,8 @@ from . import Checker
 class Maven(Checker):
     def __init__(self):
         super().__init__()
+        self.name = 'Maven'
+
         self.vuln_template = re.compile("""
             <a class="vuln" href="https://cve\.mitre\.org.+?>(.+?)</a>
         """.replace('\n', '').replace('    ', '').strip())
