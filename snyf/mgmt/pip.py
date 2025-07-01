@@ -39,6 +39,9 @@ class Pip(Manager):
         pkgs = json.loads(open('/tmp/requirements.json', 'r').read())['install']
         deps = {}
         for dep in pkgs:
+            if not dep['requested'] and not dep['is_direct']:
+                continue
+
             dep = dep['metadata']
             deps[dep['name']] = dep['version']
 

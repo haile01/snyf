@@ -253,7 +253,7 @@ class Table:
         return cur_sizes
 
     def __str__(self):
-        if len(self.rows):
+        if len(self.rows) == 0:
             return ''
 
         res = ''
