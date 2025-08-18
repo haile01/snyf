@@ -252,6 +252,15 @@ class Table:
 
         return cur_sizes
 
+    def hline(self, cur_sizes, char):
+        res = '+'
+        for size in cur_sizes:
+            res += char * (size + 2)
+            res += '+'
+        res += '\n'
+
+        return res
+
     def __str__(self):
         if len(self.rows) == 0:
             return ''
@@ -266,8 +275,7 @@ class Table:
         hline += '\n'
         header_hline = hline.replace('-', '=')
 
-        res = ''
-        res += header_hline if self.is_header[0] else hline
+        res += '+' + ('=' if self.is_header[0] else hline) * (width - 2) + '+\n'
         for idx in range(len(self.rows)):
             row_format = self.row_formats[idx]
             cur_sizes = self.merged_cells(row_format, col_sizes)
@@ -294,8 +302,9 @@ class Table:
             res += line
 
             if self.is_header[idx] or (idx + 1 < len(self.is_header) and self.is_header[idx + 1]):
-                res += header_hline
+                hline_char = '='
             else:
-                res += hline
+                hline_char = '-'
+            res += self.hline(cur_sizes, hline_char)
 
         return res

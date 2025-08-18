@@ -21,13 +21,13 @@ class Maven(Manager):
         if is_toml:
             deps = self.toml_parse(target)
             if len(deps):
-                return deps
+                return { target: deps }
 
         else:
             target = '\n'.join('' if len(line) and line[0] == '#' else line for line in target.split('\n'))
             deps = self.simple_parse(target)
             if len(deps):
-                return deps
+                return { target: deps }
 
         raise Exception("Versioning strategy not supported (yet)")
 

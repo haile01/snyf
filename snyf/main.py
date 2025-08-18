@@ -27,6 +27,7 @@ if __name__ == '__main__' and __package__ is None:
 from .checker.snyk import Snyk
 from .checker.maven import Maven
 from .mgmt.maven import Maven as MavenMgmt
+from .mgmt.gradle import Gradle as GradleMgmt
 from .mgmt.npm import Npm as NpmMgmt
 from .mgmt.pnpm import Pnpm as PnpmMgmt
 from .mgmt.pip import Pip as PipMgmt
@@ -37,6 +38,7 @@ from .test import parse_test
 snyk = Snyk()
 maven = Maven()
 maven_mgmt = MavenMgmt()
+gradle_mgmt = GradleMgmt()
 npm_mgmt = NpmMgmt()
 pnpm_mgmt = PnpmMgmt()
 pip_mgmt = PipMgmt()
@@ -46,6 +48,7 @@ def parse_deps():
         'npm': npm_mgmt.parse,
         'pnpm': pnpm_mgmt.parse,
         'maven': maven_mgmt.parse,
+        'gradle': gradle_mgmt.parse,
         'pip': pip_mgmt.parse,
     }
 
@@ -57,17 +60,23 @@ def parse_deps():
 if __name__ == "__main__":
     parse_test()
     mgmt, deps = parse_deps()
-    print(f'> Found {str(len(deps))} direct dependencies')
-    for dep in deps:
-        ver = deps[dep]
-        print("=====\033[95m", dep, ver, "\033[0m=====")
-        if ver[0] == '^':
-            # NOTE: only happen when package-lock.json is f-ed up, so anw...
-            ver = ver[1:]
-
-        snyk.check(mgmt + '/' + dep, ver)
+    # I love python
+    print(f'> Found {str(sum(map(lambda x: len(x[1]), deps)))} direct dependencies')
+    for path in deps:
+        snyk.header(path)
         if mgmt == "maven":
-            maven.check(dep, ver)
+            maven.header(path)
+
+        for dep in deps[path]:
+            ver = deps[path][dep]
+            print("=====\033[95m", dep, ver, "\033[0m=====")
+            if ver[0] == '^':
+                # NOTE: only happen when package-lock.json is f-ed up, so anw...
+                ver = ver[1:]
+
+            snyk.check(mgmt + '/' + dep, ver)
+            if mgmt == "maven":
+                maven.check(dep, ver)
 
     snyk.render()
     if mgmt == "maven":

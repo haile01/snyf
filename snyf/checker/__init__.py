@@ -4,12 +4,22 @@ class Checker:
     def __init__(self):
         self.table = Table('|*|')
         self.show = False
+        self.cached_vulns = {}
 
     def parse(self, args):
         raise Exception("Not implemented")
 
-    def check(self, dep, version):
+    def check_dep(self, dep, version):
         raise Exception("Not implemented")
+
+    def check(self, dep, version):
+        name = f'{dep}@{version}'
+        if name not in self.cached_vulns:
+            vulns = self.check_dep(dep, version)
+            self.cached_vulns[name] = vulns
+            return vulns
+        else:
+            return self.cached_vulns[name]
 
     def update(self, name, url, vulns):
         color_map = {
@@ -32,6 +42,11 @@ class Checker:
                 vuln['affected'],
                 (vuln['url'], 'i')
             ])
+
+    def header(self, header):
+        self.table.add_row([
+            (header, 'b---'),
+        ], True)
 
     def render(self):
         if self.show:

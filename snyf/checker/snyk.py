@@ -7,7 +7,7 @@ class Snyk(Checker):
         super().__init__()
         self.name = 'Snyk'
 
-        self.vuln_template = re.compile("""
+        self.vuln_template = re.compile(r"""
             <tr.+?>
                 <td.+?>
                     <ul.+?><li.+?><abbr.+?>\s*(?P<sev>[A-Z])\s*<\/abbr><\/li><\/ul>
@@ -24,11 +24,11 @@ class Snyk(Checker):
             <\/tr>
         """.replace('\n', '').replace('    ', '').strip())
 
-        self.version_template = re.compile("""
+        self.version_template = re.compile(r"""
             <span.+?><span.+?title="(.+?)".+?</span>.*?</span>
         """.replace('\n', '').replace('    ', '').strip())
 
-        self.parsed_version_template = re.compile("""
+        self.parsed_version_template = re.compile(r"""
             title="([\[\(][0-9a-zA-Z\-\.]*,[0-9a-zA-Z\-\.]*[\]\)])
         """.replace('\n', '').replace('    ', '').strip())
 
@@ -114,7 +114,7 @@ class Snyk(Checker):
 
         return res
 
-    def check(self, dep, ver):
+    def check_dep(self, dep, ver):
         url = f'https://security.snyk.io/package/{dep}/{ver}'
         r = requests.get(url)
         vulns = re.findall(self.vuln_template, self.clean_comment(r.text))

@@ -6,7 +6,7 @@ from . import Manager
 class Pip(Manager):
     def parse(self, args, flags):
         if flags.get('pip-resolve'):
-            return self.resolve()
+            deps = self.resolve()
 
         if os.path.isfile(self.cwd + '/requirements.txt'):
             res = {}
@@ -30,7 +30,8 @@ class Pip(Manager):
             print('> requirements.txt not found')
             exit()
 
-        return deps
+        target = self.cwd + '/requirements.txt'
+        return { target: deps }
 
     def resolve(self):
         # NOTE: if this gets command injection it's Python's problem not mine ;-;

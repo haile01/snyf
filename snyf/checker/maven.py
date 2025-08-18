@@ -7,11 +7,11 @@ class Maven(Checker):
         super().__init__()
         self.name = 'Maven'
 
-        self.vuln_template = re.compile("""
+        self.vuln_template = re.compile(r"""
             <a class="vuln" href="https://cve\.mitre\.org.+?>(.+?)</a>
         """.replace('\n', '').replace('    ', '').strip())
 
-    def check(self, dep, ver):
+    def check_dep(self, dep, ver):
         dep = dep.replace(':', '/')
         url = f'https://mvnrepository.com/artifact/{dep}/{ver}'
         headers = {
