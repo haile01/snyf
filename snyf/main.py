@@ -67,6 +67,7 @@ if __name__ == "__main__":
 
     print(f'> Found {str(dep_cnt)} direct dependencies')
 
+    # TODO: Add a "closest non-vuln version" row
     for path in deps:
         snyk.header(path)
         if mgmt == "maven":
@@ -74,7 +75,7 @@ if __name__ == "__main__":
 
         for dep in deps[path]:
             ver = deps[path][dep]
-            print("=====\033[95m", dep, ver, "\033[0m=====")
+            print("\033[95m", dep, ver, "\033[0m")
             if ver[0] == '^':
                 # NOTE: only happen when package-lock.json is f-ed up, so anw...
                 ver = ver[1:]
