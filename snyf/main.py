@@ -60,8 +60,13 @@ def parse_deps():
 if __name__ == "__main__":
     parse_test()
     mgmt, deps = parse_deps()
-    # I love python
-    print(f'> Found {str(sum(map(lambda x: len(x[1]), deps)))} direct dependencies')
+
+    dep_cnt = 0
+    for path in deps:
+        dep_cnt += len(deps[path])
+
+    print(f'> Found {str(dep_cnt)} direct dependencies')
+
     for path in deps:
         snyk.header(path)
         if mgmt == "maven":
