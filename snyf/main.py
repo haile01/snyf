@@ -26,8 +26,9 @@ if __name__ == '__main__' and __package__ is None:
 
 from .checker.snyk import Snyk
 from .checker.maven import Maven
-from .mgmt.maven import Maven as MavenMgmt
+from .mgmt.deptree import DepTree as DepTreeMgmt
 from .mgmt.gradle import Gradle as GradleMgmt
+from .mgmt.maven import Maven as MavenMgmt
 from .mgmt.npm import Npm as NpmMgmt
 from .mgmt.pnpm import Pnpm as PnpmMgmt
 from .mgmt.pip import Pip as PipMgmt
@@ -39,6 +40,7 @@ snyk = Snyk()
 maven = Maven()
 maven_mgmt = MavenMgmt()
 gradle_mgmt = GradleMgmt()
+deptree_mgmt = DepTreeMgmt()
 npm_mgmt = NpmMgmt()
 pnpm_mgmt = PnpmMgmt()
 pip_mgmt = PipMgmt()
@@ -49,6 +51,7 @@ def parse_deps():
         'pnpm': pnpm_mgmt.parse,
         'maven': maven_mgmt.parse,
         'gradle': gradle_mgmt.parse,
+        'deptree': deptree_mgmt.parse,
         'pip': pip_mgmt.parse,
     }
 

@@ -27,6 +27,9 @@ def parse_args(parsers):
     elif args[0] == 'gradle':
         parser = parsers['gradle']
         mgmt = 'maven'
+    elif args[0] == 'deptree':
+        parser = parsers['deptree']
+        mgmt = 'maven'
     elif args[0] == 'pip':
         parser = parsers['pip']
         mgmt = 'pip'
