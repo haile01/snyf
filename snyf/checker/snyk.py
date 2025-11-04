@@ -25,7 +25,7 @@ class Snyk(Checker):
         """.replace('\n', '').replace('    ', '').strip())
 
         self.version_template = re.compile(r"""
-            <span.+?><span.+?title="(.+?)".+?</span>.*?</span>
+            <span.+?>(.+?)</span>
         """.replace('\n', '').replace('    ', '').strip())
 
         self.parsed_version_template = re.compile(r"""
@@ -34,28 +34,6 @@ class Snyk(Checker):
 
     def clean_comment(self, text):
         return text.replace('<!--]-->', '').replace('<!--[-->', '').replace('<!---->', '')
-
-    def format(self, vuln):
-        res = ''
-        sev, tag, vuln_name, body, vuln_ver = vuln
-
-        # TODO
-        # parse(body)???
-
-        if sev == 'L':
-            res += '\033[92m v[L] '
-        elif sev == 'M':
-            res += '\033[93m -[M] '
-        elif sev == 'H':
-            res += '\033[91m ^[H] '
-        else:
-            res += '\033[91m ^[C] '
-
-        res += vuln_name + '\033[0m '
-        res += self.parse_vers(vuln_ver) + ' '
-        res += 'https://security.snyk.io/vuln/' + tag + ' '
-
-        return res
 
     def parse_vers(self, vers):
         res = []
